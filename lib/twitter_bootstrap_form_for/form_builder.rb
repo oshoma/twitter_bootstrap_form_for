@@ -38,8 +38,10 @@ class TwitterBootstrapFormFor::FormBuilder < ActionView::Helpers::FormBuilder
   # and the appropriate markup. All toggle buttons should be rendered
   # inside of here, and will not look correct unless they are.
   #
-  def toggles(label = nil, &block)
-    template.content_tag(:div, :class => 'clearfix control-group') do
+  def toggles(label = nil, attribute = nil, &block)
+    classes = ['clearfix', 'control-group']
+    classes << 'error' if attribute && errors_on?(attribute)
+    template.content_tag(:div, :class => classes.join(' ')) do
       template.concat template.content_tag(:label, label, :class => 'control-label')
       template.concat template.content_tag(:div, :class => "input controls") { block.call }
     end
@@ -78,13 +80,24 @@ class TwitterBootstrapFormFor::FormBuilder < ActionView::Helpers::FormBuilder
       options  = args.extract_options!
       label    = args.first.nil? ? '' : args.shift
       classes  = [ 'input', 'controls' ]
-      classes << ('input-' + options.delete(:add_on).to_s) if options[:add_on]
+
+      if options[:append]
+        classes << 'input-append'
+        append_add_on = options.delete(:append)
+      end
+
+      if options[:prepend]
+        classes << 'input-prepend'
+        prepend_add_on = options.delete(:prepend)
+      end
 
       self.div_wrapper(attribute) do
         template.concat self.label(attribute, label, :class => 'control-label') if label
         template.concat template.content_tag(:div, :class => classes.join(' ')) {
+          template.concat template.content_tag(:span, prepend_add_on, :class => "add-on") if prepend_add_on
           template.concat super(attribute, *(args << options))
           template.concat error_span(attribute)
+          template.concat template.content_tag(:span, append_add_on, :class => "add-on") if append_add_on
           block.call if block.present?
         }
       end
@@ -99,7 +112,7 @@ class TwitterBootstrapFormFor::FormBuilder < ActionView::Helpers::FormBuilder
                     when :check_box
                       { :for => target, :class => :checkbox }
                     when :radio_button
-                      { :class => :radio}
+                      { :class => :radio }
                     else
                       {}
                     end
