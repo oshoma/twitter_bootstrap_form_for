@@ -96,8 +96,8 @@ class TwitterBootstrapFormFor::FormBuilder < ActionView::Helpers::FormBuilder
         template.concat template.content_tag(:div, :class => classes.join(' ')) {
           template.concat template.content_tag(:span, prepend_add_on, :class => "add-on") if prepend_add_on
           template.concat super(attribute, *(args << options))
-          template.concat error_span(attribute)
           template.concat template.content_tag(:span, append_add_on, :class => "add-on") if append_add_on
+          template.concat error_span(attribute)
           block.call if block.present?
         }
       end
