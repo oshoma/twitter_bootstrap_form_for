@@ -38,6 +38,7 @@ class TwitterBootstrapFormFor::FormBuilder < ActionView::Helpers::FormBuilder
   # and the appropriate markup. All toggle buttons should be rendered
   # inside of here, and will not look correct unless they are.
   #
+  # TODO: Come up with a better way to determine that there was an error.
   def toggles(label = nil, attribute = nil, &block)
     classes = ['clearfix', 'control-group']
     classes << 'error' if attribute && errors_on?(attribute)
